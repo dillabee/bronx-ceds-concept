@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Bronx CEDS Concept</title>
+<meta name="description" content="Concept mock-up of a public Bronx CEDS website and implementation dashboard. Illustrative statuses and partners.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+/* BXEDC brand: purple #210070, orange #EA672D, blue #0074BA / #005487. Acumin Pro → Archivo web stand-in. */
+:root{
+  --navy:#210070;--navy-2:#0074BA;--green:#EA672D;--green-2:#b8471a;--pale:#fdeee6;--sky:#e7f1f9;
+  --ink:#1b1340;--ink-2:#4a4566;--muted:#716c88;--line:#dcdae6;--bg:#f7f6fb;--card:#fff;
+  --s-planned:#7a8794;--s-underway:#1f6fc5;--s-milestone:#3d7a12;--s-attention:#b25e00;
+  --radius:4px;--shadow:0 1px 2px rgba(33,0,112,.05),0 4px 16px rgba(33,0,112,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 'Archivo',Acumin-Pro,system-ui,'Segoe UI',sans-serif}
+a{color:var(--navy-2)}
+:focus-visible{outline:3px solid #EA672D;outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.concept{background:#fff7e0;border-bottom:1px solid #f0d98a;color:#5c4500;font-size:13.5px;padding:7px 0}
+.concept .wrap{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.concept b{font-weight:700}
+.skip{position:absolute;left:-999px}.skip:focus{left:10px;top:10px;background:#fff;padding:8px;z-index:9}
+header.site{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+header.site .wrap{display:flex;align-items:center;gap:20px;min-height:68px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);font-weight:800;letter-spacing:-.01em}
+.logos{display:flex;align-items:center;gap:12px}.logos img{display:block;height:34px;width:auto}.logos .ob{height:40px}.logos .sep{width:1px;height:34px;background:var(--line)}.logos .fb{font-weight:900;font-size:22px;letter-spacing:-.02em;color:#EA672D}.logos .fb span{color:#0074BA}.brandtxt{border-left:3px solid #EA672D;padding-left:12px;line-height:1.2}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px;letter-spacing:0}
+nav.main{display:flex;gap:2px;flex-wrap:wrap;margin-left:auto}
+nav.main a{padding:9px 12px;border-radius:6px;color:var(--ink-2);text-decoration:none;font-weight:600;font-size:14.5px}
+nav.main a:hover{background:var(--sky);color:var(--navy)}
+nav.main a[aria-current=page]{background:var(--navy);color:#fff;border-radius:999px}
+.lang{border:1px solid var(--line);background:#fff;border-radius:6px;padding:7px 9px;font:inherit;font-size:13.5px;color:var(--ink-2)}
+main{min-height:70vh}
+section.view{display:none}section.view.on{display:block}
+.hero{background:linear-gradient(115deg,#210070 0%,#2b0a8f 55%,#005487 100%);color:#fff;padding:64px 0 56px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-120px;top:-80px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(234,103,45,.38),transparent 65%)}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:700;color:#ffb48f}
+.hero h1{font-size:clamp(30px,4.6vw,50px);line-height:1.08;margin:10px 0 16px;max-width:820px;letter-spacing:-.02em}
+.hero p.lead{font-size:19px;max-width:740px;color:#e4e0f5;margin:0 0 26px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:700;text-decoration:none;border:2px solid transparent;cursor:pointer;font:inherit;font-weight:700}
+.btn.primary{background:#EA672D;color:#210070}.btn.primary:hover{background:#f27d48}
+.btn.ghost{border-color:rgba(255,255,255,.55);color:#fff;background:transparent}.btn.ghost:hover{background:rgba(255,255,255,.1)}
+.btn.navy{background:#005487;color:#fff}.btn.line{border-color:var(--navy);color:var(--navy);background:#fff}
+.btns{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+.band{padding:52px 0}.band.alt{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:clamp(24px,3vw,32px);letter-spacing:-.015em;margin:0 0 8px;color:var(--navy)}
+h3{margin:0 0 6px;font-size:19px}
+.sub{color:var(--ink-2);max-width:760px;margin:0 0 26px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.card p{margin:.3em 0 0;color:var(--ink-2)}
+.goalcard{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;border-top:5px solid var(--gc);transition:transform .15s}
+.goalcard:hover{transform:translateY(-2px)}
+.gnum{width:34px;height:34px;border-radius:50%;background:var(--gc);color:#fff;display:grid;place-items:center;font-weight:800}
+.goalcard .more{margin-top:auto;font-weight:700;color:var(--navy-2);font-size:14.5px}
+.stat{padding:18px 20px}
+.stat .v{font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-.02em;line-height:1.1}
+.stat .l{color:var(--ink-2);font-size:14.5px;margin-top:4px}
+.stat .src{color:var(--muted);font-size:12px;margin-top:8px}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--pale);color:var(--green-2)}
+.tag.blue{background:var(--sky);color:var(--navy)}
+.vision{font-size:clamp(19px,2.2vw,24px);line-height:1.45;color:var(--navy);font-weight:600;border-left:5px solid var(--green);padding:6px 0 6px 22px;max-width:900px;margin:0}
+.timeline{list-style:none;padding:0;margin:0;position:relative}
+.timeline:before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.timeline li{position:relative;padding:0 0 22px 40px}
+.timeline li:before{content:"";position:absolute;left:4px;top:5px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--green)}
+.timeline li.now:before{background:var(--green)}
+.timeline b{color:var(--navy)}
+.pillar{border-left:5px solid var(--navy);}
+.pillar.p2{border-left-color:var(--green)}
+.pillar ul{margin:10px 0 0;padding-left:18px;color:var(--ink-2)}
+details.goal{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);border-left:6px solid var(--gc)}
+details.goal summary{cursor:pointer;list-style:none;padding:18px 20px;display:flex;gap:14px;align-items:flex-start}
+details.goal summary::-webkit-details-marker{display:none}
+details.goal summary .gnum{flex:none}
+details.goal .body{padding:0 20px 20px 68px}
+.actlist{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.actlist li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--bg);border-radius:8px}
+.actlist code{font:700 13px/1.6 'Archivo';color:var(--navy);min-width:38px}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;white-space:nowrap;color:var(--ink)}
+.status i{width:10px;height:10px;border-radius:2px;display:inline-block;font-style:normal}
+.status.planned i{background:var(--s-planned);border-radius:50%}
+.status.underway i{background:var(--s-underway);clip-path:polygon(0 0,100% 50%,0 100%)}
+.status.milestone i{background:var(--s-milestone)}
+.status.attention i{background:var(--s-attention);clip-path:polygon(50% 0,100% 100%,0 100%)}
+/* dashboard */
+.dashhead{background:#fff;border-bottom:1px solid var(--line);padding:30px 0 18px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:18px}
+.filters label{display:flex;flex-direction:column;font-size:12.5px;font-weight:700;color:var(--ink-2);gap:4px}
+.filters select,.filters input{font:inherit;font-size:14.5px;padding:8px 10px;border:1px solid #b8c4d0;border-radius:7px;background:#fff;min-width:150px}
+.filters input{min-width:220px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;font:inherit;font-size:13.5px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip[aria-pressed=true] .status{color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:22px 0}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.kpi .v{font-size:30px;font-weight:800;color:var(--navy);line-height:1.1}
+.kpi .l{font-size:13.5px;color:var(--ink-2)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media(max-width:960px){.dgrid{grid-template-columns:1fr}}
+.byg{display:grid;gap:12px}
+.byg .row{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;font-size:13.5px}
+.byg .row b{font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar{display:flex;gap:2px;height:14px}
+.sbar span{display:block;height:100%;position:relative}
+.sbar span:first-child{border-radius:4px 0 0 4px}.sbar span:last-child{border-radius:0 4px 4px 0}
+.sbar span:only-child{border-radius:4px}
+.sbar .planned{background:var(--s-planned)}.sbar .underway{background:var(--s-underway)}.sbar .milestone{background:var(--s-milestone)}.sbar .attention{background:var(--s-attention)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 14px}
+.acts{display:grid;gap:10px}
+.act{background:#fff;border:1px solid var(--line);border-left:5px solid var(--gc);border-radius:var(--radius);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 16px;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.act:hover{box-shadow:var(--shadow)}
+.act .t{font-weight:700}
+.act .m{font-size:13.5px;color:var(--ink-2);grid-column:1/-1;display:flex;gap:14px;flex-wrap:wrap}
+.prog{height:6px;background:#e6ebf0;border-radius:99px;overflow:hidden;grid-column:1/-1;margin-top:6px}
+.prog span{display:block;height:100%;background:var(--navy-2);border-radius:99px}
+.empty{padding:30px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:var(--radius)}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:#fff;font-size:13px;padding:6px 9px;border-radius:6px;opacity:0;transition:opacity .1s;z-index:30}
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,25,45,.45);opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.scrim.on{opacity:1;pointer-events:auto}
+aside.drawer{position:fixed;top:0;right:0;height:100%;width:min(560px,100%);background:#fff;z-index:21;transform:translateX(100%);transition:transform .25s;overflow:auto;box-shadow:-10px 0 40px rgba(0,0,0,.15)}
+aside.drawer.on{transform:none}
+.drawer .dh{padding:22px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;border-top:6px solid var(--gc)}
+.drawer .db{padding:20px 24px}
+.close{float:right;border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font:inherit}
+dl.facts{display:grid;grid-template-columns:150px 1fr;gap:8px 14px;margin:0 0 18px;font-size:14.5px}
+dl.facts dt{color:var(--muted);font-weight:600}dl.facts dd{margin:0}
+.ms{list-style:none;padding:0;margin:0 0 18px}
+.ms li{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #eef1f4;font-size:14.5px}
+.ms .ck{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid var(--s-planned);display:grid;place-items:center;font-size:12px;color:#fff}
+.ms .ck.done{background:var(--s-milestone);border-color:var(--s-milestone)}
+.upd{border-left:3px solid var(--line);padding:2px 0 10px 14px;margin-bottom:8px;font-size:14.5px}
+.upd time{display:block;font-size:12.5px;color:var(--muted);font-weight:600}
+.drawer h4{margin:18px 0 8px;color:var(--navy);font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+/* table view */
+table.t{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
+table.t th,table.t td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.t th{background:var(--sky);color:var(--navy);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:var(--radius)}
+.viewtoggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.viewtoggle button{border:0;background:#fff;padding:7px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.viewtoggle button[aria-pressed=true]{background:var(--navy);color:#fff}
+/* map */
+.cdmap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:680px;margin:10px 0 14px}
+.cd{border:1px solid #b8c4d0;border-radius:6px;padding:9px 10px;text-align:left;font:inherit;color:var(--ink);cursor:pointer;min-height:88px;display:flex;flex-direction:column;gap:2px}
+.cd b{font-size:13px;color:var(--navy)}.cd small{font-size:11.5px;line-height:1.25;color:var(--ink-2)}
+.cd .n{margin-top:auto;font-size:13px;font-weight:700}
+.cd[aria-pressed=true]{outline:3px solid #EA672D;outline-offset:1px}
+.cd.blank{visibility:hidden}
+#map{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+/* news, biz */
+.news .date{font-size:12.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.biz .ic{width:44px;height:44px;border-radius:10px;background:var(--pale);display:grid;place-items:center;font-size:22px;margin-bottom:8px}
+/* assistant */
+.fab{position:fixed;right:22px;bottom:22px;z-index:15;background:#EA672D;color:#210070 !important;color:#fff;border:0;border-radius:99px;padding:13px 18px;font:inherit;font-weight:700;box-shadow:0 6px 20px rgba(0,30,70,.3);cursor:pointer;display:flex;gap:8px;align-items:center}
+.chat{position:fixed;right:22px;bottom:84px;width:min(390px,calc(100% - 32px));max-height:min(560px,75vh);background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 40px rgba(0,20,50,.25);z-index:16;display:none;flex-direction:column;overflow:hidden}
+.chat.on{display:flex}
+.chat .ch{background:var(--navy);color:#fff;padding:14px 16px}
+.chat .ch small{display:block;color:#d6d0f0;font-size:12px}
+.chat .cb{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.msg{padding:10px 12px;border-radius:12px;font-size:14.5px;max-width:88%}
+.msg.u{background:var(--navy);color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+.msg.a{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:3px}
+.msg .cite{display:block;margin-top:6px;font-size:12.5px}
+.sugg{display:flex;gap:6px;flex-wrap:wrap}
+.sugg button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+.chat form{display:flex;border-top:1px solid var(--line)}
+.chat input{flex:1;border:0;padding:12px;font:inherit;font-size:14.5px}
+.chat form button{border:0;background:var(--green);color:#210070;font:inherit;font-weight:700;padding:0 16px;cursor:pointer}
+footer{background:var(--navy);color:#d6d0f0;border-top:6px solid #EA672D;padding:36px 0;margin-top:40px;font-size:14px}
+footer a{color:#fff}
+footer .grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.note{font-size:13px;color:var(--muted)}
+.annot{background:#fff7e0;border:1px dashed #d9b84a;border-radius:8px;padding:10px 12px;font-size:13.5px;color:#5c4500;margin:14px 0}
+.annot b{color:#3d2e00}
+body.noannot .annot{display:none}
+@media(max-width:720px){
+  nav.main{margin-left:0;width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px}
+  nav.main a{white-space:nowrap}
+  details.goal .body{padding-left:20px}
+  .byg .row{grid-template-columns:100px 1fr 28px}
+  dl.facts{grid-template-columns:1fr}
+  .hero{padding:44px 0 40px}
+  header.site{position:static}
+  .brand small{display:none}
+  .fab{right:12px;bottom:12px;padding:10px 14px;font-size:14px}
+  .cdmap{gap:5px}.cd{padding:6px;min-height:76px}.cd small{display:none}
+}
+footer{padding-bottom:84px}
+
+/* ===== motion layer (added Nov 12) ===== */
+h1,h2,.kpi .v,.stat .v{font-stretch:86%}
+h2{font-weight:900}
+#sp{position:fixed;top:0;left:0;height:3px;width:0;background:#EA672D;z-index:40}
+.hero{padding:72px 0 44px;background:#16004d}
+.hero:after{animation:drift 14s ease-in-out infinite alternate}
+.herolines{position:absolute;inset:0;width:100%;height:100%}
+.herolines .ln{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;opacity:.6}
+.herolines .fl{fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 46;opacity:.9;animation:flow 5s linear infinite}
+.herolines .st{fill:#16004d;stroke:#fff;stroke-width:3}
+.herolines .pu{fill:none;stroke:#EA672D;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:ping 2.6s ease-out infinite}
+.heroshade{position:absolute;inset:0;background:linear-gradient(90deg,#16004d 0%,rgba(22,0,77,.95) 36%,rgba(22,0,77,.6) 60%,rgba(22,0,77,.12) 100%)}
+.herogrid{position:relative;z-index:1}
+.hero h1{font-size:clamp(34px,5.6vw,68px);font-weight:900;line-height:1.02;max-width:900px}
+.rot{display:inline-block;color:#ff9a6b}
+.rot.sw{animation:rotin .55s cubic-bezier(.2,.8,.2,1)}
+.livedot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#EA672D;margin-right:10px;box-shadow:0 0 0 0 rgba(234,103,45,.7);animation:beat 1.8s infinite}
+.hero .kpis{margin:40px 0 0}
+.hero .kpi{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.hero .kpi .v{color:#fff;font-size:38px}.hero .kpi .l{color:#d6d0f0}
+.ticker{background:#0d0033;color:#fff;font-size:14px}
+.tk{display:flex;align-items:center;gap:14px;height:46px}
+.tk b{flex:none;background:#EA672D;color:#16004d;padding:2px 10px;border-radius:99px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.tkwin{overflow:hidden;flex:1;min-width:0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.tktrack{display:flex;gap:48px;white-space:nowrap;width:max-content;animation:marq 42s linear infinite}
+.tkwin:hover .tktrack,.tkwin:focus-within .tktrack{animation-play-state:paused}
+.tktrack a{color:#fff;text-decoration:none}.tktrack a:hover{text-decoration:underline}
+.tktrack span{color:#ffb48f;font-weight:700;margin-right:8px}
+.linemap{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 18px 8px;box-shadow:var(--shadow);overflow-x:auto;margin-bottom:38px}
+#lines svg{display:block;min-width:820px;width:100%;height:auto}
+.lm-line{fill:none;stroke-width:9;stroke-linecap:round}
+.js-motion .lm-line{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.3s cubic-bezier(.3,.7,.2,1)}
+.js-motion .in .lm-line{stroke-dashoffset:0}
+.lm-st{cursor:pointer;outline:none}
+.js-motion .lm-st{opacity:0;transform:scale(.2);transform-box:fill-box;transform-origin:center;transition:opacity .3s,transform .45s cubic-bezier(.3,1.6,.5,1)}
+.js-motion .in .lm-st{opacity:1;transform:none}
+.lm-st:hover .ring,.lm-st:focus .ring{stroke-width:6}
+.lm-st:focus-visible .ring{stroke:#EA672D}
+.lm-id{font-size:11.5px;fill:var(--ink-2);text-anchor:middle;font-weight:600}
+.lm-name{font-size:16px;font-weight:800;fill:var(--ink)}
+.lm-end{font-size:12.5px;fill:var(--muted);font-weight:600}
+.lm-num{font-size:15px;font-weight:800;fill:#fff;text-anchor:middle}
+.train{fill:#fff;stroke-width:3}
+.tip{max-width:320px}
+.js-motion .rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.js-motion .rv.in{opacity:1;transform:none}
+.js-motion .goalcard.rv.in:hover{transform:translateY(-4px)}
+.goalcard{position:relative;overflow:hidden}
+.goalcard:before{content:attr(data-n);position:absolute;right:6px;top:-26px;font-size:150px;font-weight:900;line-height:1;color:var(--gc);opacity:.07;font-stretch:75%}
+.dashhead{background:linear-gradient(115deg,#16004d 0%,#2b0a8f 58%,#005487 100%);color:#fff;border:0;padding:38px 0 22px}
+.dashhead h2{color:#fff;font-size:clamp(30px,4.4vw,52px)}
+.dashhead .sub{color:#e4e0f5}
+.dashhead .filters label{color:#d6d0f0}
+.dashhead .filters select,.dashhead .filters input{border-color:transparent}
+.dashhead .tag.blue{background:rgba(255,255,255,.16);color:#fff}
+.dashhead .btn.line{border-color:#fff}
+#dashKpis .kpi{border-top:4px solid var(--navy-2)}
+#dashKpis .kpi:nth-child(2){border-top-color:var(--s-underway)}#dashKpis .kpi:nth-child(3){border-top-color:var(--s-milestone)}#dashKpis .kpi:nth-child(4){border-top-color:var(--s-attention)}
+.act{animation:up .5s both;animation-delay:calc(var(--i,0)*40ms)}
+.prog span{transform-origin:left;animation:grow .9s .15s both}
+.sbar span{transform-origin:left;animation:grow .8s both}
+.cd{animation:pop .4s both}
+.fab:after{content:"";position:absolute;inset:0;border-radius:99px;border:2px solid #EA672D;animation:ping2 2.8s ease-out infinite;pointer-events:none}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+@keyframes grow{from{transform:scaleX(0)}}
+@keyframes pop{from{opacity:0;transform:scale(.9)}}
+@keyframes drift{to{transform:translate(-90px,70px) scale(1.18)}}
+@keyframes ping{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.2);opacity:0}}
+@keyframes ping2{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.25,1.6);opacity:0}}
+@keyframes beat{70%{box-shadow:0 0 0 10px rgba(234,103,45,0)}100%{box-shadow:0 0 0 0 rgba(234,103,45,0)}}
+@keyframes rotin{from{opacity:0;transform:translateY(.5em)}}
+@keyframes flow{to{stroke-dashoffset:-470}}
+@keyframes marq{to{transform:translateX(-50%)}}
+html.still *,html.still *:before,html.still *:after{animation:none!important;transition:none!important}
+@media print{.js-motion .rv,.js-motion .lm-st{opacity:1!important;transform:none!important}.js-motion .lm-line{stroke-dashoffset:0!important}.fab,.ticker,#sp{display:none}}
+@media(max-width:720px){.heroshade{background:rgba(22,0,77,.84)}.hero .kpis{grid-template-columns:1fr 1fr}.hero .kpi .v{font-size:30px}}
+
+/* ===== dashboard v2 ===== */
+.ico{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.dashhead{padding-bottom:62px}
+.gstrip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:-36px 0 16px;position:relative;z-index:2}
+.gt{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px 14px;font:inherit;text-align:left;cursor:pointer;box-shadow:0 6px 18px rgba(22,0,77,.12);color:var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s;animation:up .5s both}
+.gt:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(22,0,77,.18)}
+.gt[aria-pressed=true]{border-color:var(--gc);background:color-mix(in srgb,var(--gc) 9%,#fff)}
+.gti{width:36px;height:36px;border-radius:10px;background:var(--gc);color:#fff;display:grid;place-items:center;flex:none}
+.gtt{min-width:0;flex:1}
+.gtt b{display:block;font-size:13.5px;font-stretch:85%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtt small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.gtb{position:absolute;left:0;bottom:0;height:4px;background:var(--gc);transform-origin:left;animation:grow 1s .3s both}
+.pulse{display:grid;grid-template-columns:1.3fr 1fr 1.1fr 1.35fr;gap:14px;margin:0 0 22px}
+.pn{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow);animation:up .5s both;min-width:0}
+.pn:nth-child(2){animation-delay:70ms}.pn:nth-child(3){animation-delay:140ms}.pn:nth-child(4){animation-delay:210ms}
+.pn h3{font-size:12.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 10px;display:flex;gap:6px;align-items:center}
+.pn h3 .smp{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:500;font-size:11.5px}
+.pn h3 .nb{margin-left:auto;background:#fbeedd;color:#8a4700;border-radius:99px;padding:0 9px;font-size:13px}
+.dn{display:flex;gap:12px;align-items:center}
+.donut{flex:none;animation:spin .9s cubic-bezier(.2,.8,.2,1) both}
+.donut .seg{cursor:pointer;transition:stroke-width .15s}.donut .seg:hover{stroke-width:21}
+.dnc{font-size:30px;font-weight:900;fill:var(--navy);text-anchor:middle}
+.dnl{font-size:10.5px;fill:var(--muted);text-anchor:middle;text-transform:uppercase;letter-spacing:.06em}
+.dleg{display:grid;gap:3px;flex:1;min-width:0}
+.dleg button{display:flex;align-items:center;gap:6px;border:0;background:none;font:inherit;font-size:13px;padding:3px 6px;border-radius:6px;cursor:pointer;text-align:left;color:var(--ink)}
+.dleg button:hover{background:var(--sky)}.dleg button[aria-pressed=true]{background:var(--navy);color:#fff}
+.dleg i{width:10px;height:10px;border-radius:3px;flex:none}.dleg b{margin-left:auto}
+.gauge{display:block;margin:0 auto}
+.gauge .fg{animation:gauge 1.2s .15s cubic-bezier(.2,.8,.2,1) both}
+.gv{text-align:center;margin-top:-38px}
+.gv b{font-size:34px;font-weight:900;color:var(--navy);font-stretch:86%;line-height:1.1;display:block}
+.gv small{display:block;color:var(--ink-2);font-size:12.5px}
+.spark{display:block;width:100%;height:auto}
+.spark .ln{fill:none;stroke:#EA672D;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;animation:draw 1.4s .2s both}
+.spark .ar{fill:url(#spg);animation:fade .8s 1s both}
+.spark text{font-size:9.5px;fill:var(--muted);text-anchor:middle}
+.spark .sv{font-size:13px;font-weight:800;fill:#b8471a}
+.spark .pt{fill:#EA672D}
+.spark .pp{fill:none;stroke:#EA672D;stroke-width:1.5;transform-box:fill-box;transform-origin:center;animation:ping 2.4s ease-out infinite}
+.need{display:grid;gap:6px}
+.nrow{display:flex;gap:8px;align-items:flex-start;border:0;background:#fff7f0;border-radius:8px;padding:7px 9px;font:inherit;font-size:13px;text-align:left;cursor:pointer;color:var(--ink);width:100%;min-width:0}
+.nrow:hover{background:#fdeee6}
+.nrow .ico{color:#b25e00;margin-top:2px;animation:wig 2.8s infinite}
+.nrow span{min-width:0}.nrow b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nrow small{color:var(--ink-2)}
+.acts{grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.act2{display:flex;flex-direction:column;gap:10px;border-left:1px solid var(--line);border-top:5px solid var(--gc);border-radius:10px;padding:14px 16px;transition:transform .2s,box-shadow .2s}
+.act2:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(33,0,112,.13)}
+.a2top{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);font-weight:600}
+.a2ico{width:28px;height:28px;border-radius:8px;background:var(--gc);color:#fff;display:grid;place-items:center;flex:none}
+.a2top .pill{margin-left:auto}
+.a2t{font-weight:700;font-size:15.5px;line-height:1.3}
+.a2meta{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--ink-2)}
+.a2meta span{display:inline-flex;gap:4px;align-items:center}
+.a2need{color:#8a4700;font-weight:600}
+.a2ms{display:flex;align-items:center;gap:5px;margin-top:auto;font-size:12.5px;color:var(--ink-2)}
+.a2ms i{width:22px;height:7px;border-radius:99px;background:#e1e5ea;flex:none}
+.a2ms i.on{background:var(--gc);transform-origin:left;animation:grow .6s .2s both}
+.a2ms em{font-style:normal;margin-left:6px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.pill.planned{background:#eef0f3;color:#4a5560}.pill.underway{background:#e3effb;color:#14508f}.pill.milestone{background:#e6f2dc;color:#2b5a0c}.pill.attention{background:#fbeedd;color:#8a4700}
+.pill.underway i{animation:beat2 1.6s infinite}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:start}
+.bcol{background:#eeecf6;border-radius:12px;padding:10px;display:grid;gap:8px;animation:up .5s both}
+.bcol h4{margin:2px 2px 4px;font-size:13px;display:flex;align-items:center;gap:6px}
+.bcol h4 b{margin-left:auto;background:#fff;border-radius:99px;padding:0 9px;font-size:12.5px}
+.bc{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gc);border-radius:8px;padding:9px 10px;font:inherit;text-align:left;cursor:pointer;color:var(--ink);display:grid;gap:6px;transition:transform .15s,box-shadow .15s;animation:up .45s both;animation-delay:calc(var(--i,0)*45ms)}
+.bc:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.bc b{font-size:12px;color:var(--ink-2)}
+.bc .bt{font-size:13.5px;font-weight:600;line-height:1.3}
+.bc .a2ms i{width:14px}.bc .a2ms em{display:none}
+.road{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;overflow-x:auto}
+.rin{min-width:620px;position:relative}
+.rhead,.rrow{display:grid;grid-template-columns:150px 1fr;align-items:center}
+.ryrs{display:grid;grid-template-columns:repeat(5,1fr);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.ryrs span{border-left:1px dashed var(--line);padding:2px 6px 14px}
+.rg{font-size:13px;font-weight:800;color:var(--gc);margin:12px 0 4px;display:flex;gap:6px;align-items:center}
+.rrow{min-height:28px}.rrow small{font-size:12px;color:var(--ink-2);font-weight:600}
+.rtrack{position:relative;height:22px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(20% - 1px),#e8e6f0 calc(20% - 1px),#e8e6f0 20%)}
+.rb{position:absolute;top:2px;height:18px;border:0;border-radius:99px;background:color-mix(in srgb,var(--gc) 24%,#fff);cursor:pointer;padding:0;overflow:hidden;transform-origin:left;animation:grow .7s both;animation-delay:calc(var(--i,0)*35ms)}
+.rb i{position:absolute;inset:0 auto 0 0;background:var(--gc);border-radius:99px}
+.rb:hover,.rb:focus-visible{outline:2px solid var(--gc);outline-offset:1px}
+.rnow{position:absolute;top:26px;bottom:0;width:2px;background:#EA672D;left:calc(150px + (100% - 150px)*.05)}
+.rnow:after{content:"Today";position:absolute;bottom:0;left:6px;font-size:10.5px;font-weight:700;color:#b8471a;white-space:nowrap;background:#fff;padding:0 3px}
+.frow{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:6px}.frow i{width:10px;height:10px;border-radius:3px;flex:none}.frow b{margin-left:auto}
+.feed{list-style:none;margin:10px 0 0;padding:0 0 0 16px;border-left:2px solid var(--line);display:grid;gap:12px}
+.feed li{position:relative;font-size:13.5px;animation:up .5s both}
+.feed li:before{content:"";position:absolute;left:-22px;top:5px;width:10px;height:10px;border-radius:50%;background:#EA672D;box-shadow:0 0 0 3px #fff}
+.feed time{display:block;font-size:11.5px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.viewtoggle{flex-wrap:wrap}
+@keyframes spin{from{transform:rotate(-120deg);opacity:0}}
+@keyframes gauge{from{stroke-dasharray:0 100}}
+@keyframes draw{from{stroke-dashoffset:1}}
+@keyframes fade{from{opacity:0}}
+@keyframes wig{0%,86%,100%{transform:rotate(0)}90%{transform:rotate(-14deg)}95%{transform:rotate(10deg)}}
+@keyframes beat2{0%{box-shadow:0 0 0 0 rgba(31,111,197,.6)}70%,100%{box-shadow:0 0 0 7px rgba(31,111,197,0)}}
+@media(max-width:1100px){.gstrip{grid-template-columns:repeat(3,minmax(0,1fr))}.pulse{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.board{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.gstrip{grid-template-columns:1fr 1fr}.pulse{grid-template-columns:1fr}.board{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="concept"><div class="wrap"><span><b>Concept mock-up</b> prepared by Camoin Associates / ProspectEngage for the Bronx CEDS Website &amp; Dashboard RFP. Vision, goals and actions follow the March 2026 public draft CEDS; statuses, partners, milestones and updates are <b>illustrative only</b>.</span><label><input type="checkbox" id="annotToggle" checked> Show design notes</label></div></div>
+
+<header class="site"><div class="wrap">
+  <a class="brand" href="#home"><span class="logos"><img src="https://images.squarespace-cdn.com/content/v1/6424a1f44e211a6d56c4151f/a48f83fd-0578-4b3e-8f3f-8034d4787a6f/BXEDC+Asset+1.png?format=500w" alt="BXEDC" onerror="this.outerHTML='&lt;span class=fb&gt;BX&lt;span&gt;EDC&lt;/span&gt;&lt;/span&gt;'"><span class="sep" aria-hidden="true"></span><img class="ob" src="https://images.squarespace-cdn.com/content/v1/5a2021c5e5dd5b3a4dda00d4/d7ef91ab-9cfb-412c-baf7-4f12ef767353/Our+Bronx+Logo_1974_straight_dark_homepage.webp?format=300w" alt="Our Bronx" onerror="this.outerHTML='&lt;span class=fb style=color:#00807f&gt;Our Bronx&lt;/span&gt;'"></span><span class="brandtxt">Bronx CEDS<small>Comprehensive Economic Development Strategy</small></span></a>
+  <nav class="main" aria-label="Main">
+    <a href="#home">Home</a><a href="#about">About the CEDS</a><a href="#goals">Goals &amp; Strategies</a><a href="#dashboard">Implementation Dashboard</a><a href="#bronx">The Bronx Today</a><a href="#updates">Updates</a><a href="#business">Do Business Here</a>
+  </nav>
+  <select class="lang" aria-label="Language"><option>English</option><option>Español</option></select>
+</div></header>
+
+<main id="main">
+
+<!-- HOME -->
+<section class="view" id="v-home">
+  <div class="hero"><svg class="herolines" id="heroLines" aria-hidden="true" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice"></svg><div class="heroshade" aria-hidden="true"></div><div class="wrap herogrid">
+    <div class="eyebrow"><span class="livedot" aria-hidden="true"></span>The Bronx's first-ever Comprehensive Economic Development Strategy</div>
+    <h1 aria-label="A shared plan for a Bronx economy where residents can stay, grow and thrive.">A shared plan for a Bronx economy where residents can <span class="rot" id="rot" aria-hidden="true">stay, grow and thrive.</span></h1>
+    <p class="lead">Built by hundreds of Bronxites through assemblies, surveys, focus groups and a cross-sector Strategy Committee. See what the plan says, who is doing the work, and how it is going.</p>
+    <div class="btns"><a class="btn primary" href="#dashboard">Track implementation →</a><a class="btn ghost" href="#goals">Explore the 6 goals</a><a class="btn ghost" href="#about">Read the full CEDS (PDF)</a></div>
+    <div class="kpis" id="homeKpis"></div>
+  </div></div>
+  <div class="ticker" role="region" aria-label="Latest implementation updates, sample"><div class="wrap tk"><b>Latest</b><div class="tkwin"><div class="tktrack" id="tk"></div></div></div></div>
+
+  <div class="band"><div class="wrap">
+    <div class="annot"><b>Design note:</b> Styled to BXEDC's web brand (purple, orange, blue, pill buttons), co-branded with Our Bronx. Final palette and fonts confirmed with both partners in Discovery. The home page answers three questions in order: what is this, what does it want to do, and is it happening. Every audience (resident, business, funder, partner) has a one-click path from here. Motion has a job: the transit lines show a plan that is moving, and counters and stops animate once as they come into view. Everything holds still for visitors who turn motion off. Core pages and navigation are offered in Spanish; the switch is shown but not active in this concept.</div>
+    <h2>Six lines, one borough</h2>
+    <p class="sub">Each goal runs like a transit line. Every stop is an action in the plan, marked with its current status. Select a stop to open its record.</p>
+    <div class="linemap"><div id="lines"></div><div class="legend" id="lmLegend" style="margin:8px 4px 6px"></div></div>
+    <h2>What each goal sets out to do</h2>
+    <p class="sub">The CEDS organizes its work under six goal areas. Each links to its strategies, actions and live progress.</p>
+    <div class="grid g3" id="goalCards"></div>
+  </div></div>
+
+  <div class="band alt"><div class="wrap grid g2" style="align-items:center">
+    <div>
+      <span class="tag">Our vision</span>
+      <p class="vision" style="margin-top:14px">“We envision a Bronx economy that delivers shared prosperity, strengthens local enterprise, and builds long-term neighborhood stability.”</p>
+      <p class="note" style="margin-top:12px">Excerpt from the CEDS vision statement, Public Draft (March 2026).</p>
+    </div>
+    <div class="grid g2">
+      <div class="card pillar"><span class="tag blue">Pillar 1</span><h3 style="margin-top:8px">Asset-Based Development &amp; Economic Democracy</h3><p>Who owns, governs and benefits from development.</p></div>
+      <div class="card pillar p2"><span class="tag">Pillar 2</span><h3 style="margin-top:8px">Economic Resilience</h3><p>A stronger, future-ready economy that captures long-term value.</p></div>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap"><div><h2>Latest implementation updates</h2><p class="sub" style="margin:0">Short, approved updates from action leads. Published quarterly.</p></div><a class="btn line" href="#updates">All updates</a></div>
+    <div class="grid g3 news" id="homeNews" style="margin-top:20px"></div>
+  </div></div>
+
+  <div class="band alt"><div class="wrap grid g3">
+    <div class="card"><h3>I live in the Bronx</h3><p>Learn what the plan means for your neighborhood and how to get involved.</p><p><a href="#about">How residents shaped the plan →</a></p></div>
+    <div class="card"><h3>I run a business</h3><p>Find loans, contracting pathways, IBZ sites and employee-ownership support.</p><p><a href="#business">Do business in the Bronx →</a></p></div>
+    <div class="card"><h3>I'm a partner or funder</h3><p>See which actions need partners, what is funded and where gaps remain.</p><p><a href="#dashboard">Open the dashboard →</a></p></div>
+  </div></div>
+</section>
+
+<!-- ABOUT -->
+<section class="view" id="v-about">
+  <div class="band"><div class="wrap">
+    <span class="tag blue">About the CEDS</span>
+    <h2 style="margin-top:10px">What is the Bronx CEDS?</h2>
+    <p class="sub">A Comprehensive Economic Development Strategy is a locally built, federally recognized plan for a region's economy. The U.S. Economic Development Administration (EDA) supported this one. It sets shared goals, names priority projects, and commits to tracking progress over five years. An approved CEDS also helps the Bronx compete for federal funding.</p>
+    <div class="grid g3">
+      <div class="card"><h3>📊 A SWOT analysis</h3><p>An honest look at the Bronx economy's strengths, weaknesses, opportunities and threats.</p></div>
+      <div class="card"><h3>🧭 Strategies &amp; priority projects</h3><p>Two strategic pillars, six goals and an action plan to build inclusive resilience and growth.</p></div>
+      <div class="card"><h3>📈 A way to measure progress</h3><p>A framework to track outputs and outcomes. This website and dashboard put it in public view.</p></div>
+    </div>
+  </div></div>
+  <div class="band alt"><div class="wrap grid g2">
+    <div>
+      <h2>How we got here</h2>
+      <p class="sub">The CEDS builds on five years of community-led planning.</p>
+      <ol class="timeline">
+        <li><b>2019</b> · Community-led planning for a better Bronx future begins.</li>
+        <li><b>2024</b> · Bronx-wide coalition meetings, worker cooperative town halls and the Sustainable Economy Partnership.</li>
+        <li><b>2025</b> · A year of public engagement: surveys, sector focus groups, public assemblies and interviews.</li>
+        <li><b>March 2026</b> · Public Draft released for a 30-day public comment period.</li>
+        <li><b>June 2026</b> · Inaugural Bronx Economic Development Summit.</li>
+        <li class="now"><b>2027</b> · Implementation begins. This platform launches. <span class="tag">You are here</span></li>
+      </ol>
+    </div>
+    <div>
+      <h2>Who built it</h2>
+      <div class="card" style="margin-bottom:14px"><h3>Co-leads</h3><p>The Bronx Economic Development Corporation (BXEDC) and Our Bronx (Northwest Bronx Community and Clergy Coalition).</p></div>
+      <div class="card" style="margin-bottom:14px"><h3>Strategy Committee</h3><p>A cross-sector committee of community, labor, business, institutional and public leaders that guided the analysis and priorities. <a href="#about">View members →</a></p></div>
+      <div class="card"><h3>Implementation &amp; governance</h3><p>Action 1.1 sets up a Bronx-wide council for community wealth-building implementation. This page will show its structure, working groups and meeting notes once established.</p></div>
+      <div class="annot"><b>Design note:</b> Engagement figures (assemblies held, surveys collected, focus groups) belong here as stat tiles. We'll confirm the counts from BXEDC and Our Bronx records in Discovery.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- GOALS -->
+<section class="view" id="v-goals">
+  <div class="band"><div class="wrap">
+    <span class="tag blue">Goals &amp; Strategies</span>
+    <h2 style="margin-top:10px">Two pillars. Six goals. One action plan.</h2>
+    <p class="sub">The report's strategy chapter, reduced to what readers need. Open a goal to see its outcome statement and actions, each linked to its live dashboard record.</p>
+    <div class="grid g2" style="margin-bottom:28px">
+      <div class="card pillar"><span class="tag blue">Pillar 1</span><h3 style="margin-top:8px">Asset-Based Development &amp; Economic Democracy</h3><ul><li>Co-governance of institutions</li><li>Shared ownership of assets: work, housing, land</li><li>The anchor strategy: work, business and investment</li></ul></div>
+      <div class="card pillar p2"><span class="tag">Pillar 2</span><h3 style="margin-top:8px">Economic Resilience</h3><ul><li>Fostering a just transition for the Bronx economy</li><li>Repositioning the Bronx's role in the region</li><li>Developing the high road and the high value</li></ul></div>
+    </div>
+    <div id="goalList"></div>
+  </div></div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="view" id="v-dashboard">
+  <div class="dashhead"><div class="wrap">
+    <span class="tag blue">Implementation Dashboard</span>
+    <h2 style="margin-top:10px">Is the plan happening?</h2>
+    <p class="sub" style="margin-bottom:0">Every CEDS action, its lead, timeframe and status. Staff enter short quarterly updates from each action lead, and a publisher approves them before they appear here.</p>
+    <div class="filters" role="search">
+      <label>Goal area<select id="fGoal"><option value="">All goals</option></select></label>
+      <label>Pillar<select id="fPillar"><option value="">Both pillars</option><option value="1">1 · Economic Democracy</option><option value="2">2 · Economic Resilience</option></select></label>
+      <label>Timeframe<select id="fTime"><option value="">Any</option><option>Near term (0–2 yrs)</option><option>Mid term (2–4 yrs)</option><option>Long term (4–5 yrs)</option></select></label>
+      <label>Lead organization<select id="fLead"><option value="">Any lead</option></select></label>
+      <label>Area<select id="fGeo"><option value="">Any area</option></select></label>
+      <label>Sector<select id="fSector"><option value="">Any sector</option></select></label>
+      <label>Search<input id="fText" type="search" placeholder="Try “cooperative”, “freight”, “broadband”"></label>
+      <button class="btn line" id="fReset" type="button" style="padding:8px 14px">Reset</button>
+    </div>
+    <div class="chips" id="statusChips" aria-label="Filter by status"></div>
+    <div class="annot"><b>Design note:</b> Filters cover the categories the RFP names: goal, status, lead organization, geography and sector. The same records drive five views: cards, a status board, a five-year roadmap, a map and a table. Staff keep these records current through a simple form with an approval step. <a href="staff-workflow.html">Open the staff workflow demonstration</a>.</div>
+  </div></div>
+  <div class="wrap">
+    <div class="gstrip" id="goalStrip"></div>
+    <div class="pulse" id="pulse"></div>
+    <div class="dgrid">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+          <h3 id="actCount" style="margin:0">Actions</h3>
+          <div class="viewtoggle" role="group" aria-label="View"><button id="vCards" aria-pressed="true">Cards</button><button id="vBoard" aria-pressed="false">Board</button><button id="vRoad" aria-pressed="false">Roadmap</button><button id="vMap" aria-pressed="false">Map</button><button id="vTable" aria-pressed="false">Table</button></div>
+        </div>
+        <div id="map" hidden></div>
+        <div id="board" hidden></div>
+        <div id="road" hidden></div>
+        <div class="acts" id="acts"></div>
+        <div class="tblwrap" id="tbl" hidden></div>
+      </div>
+      <div style="display:grid;gap:18px">
+        <div class="card">
+          <h3>Status by goal</h3>
+          <div class="legend" id="legend"></div>
+          <div class="byg" id="byGoal"></div>
+        </div>
+        <div class="card"><h3>Funding picture</h3><div id="fund"></div></div>
+        <div class="card"><h3>Recent activity</h3><div id="feed"></div></div>
+        <div class="card">
+          <h3>How status works</h3>
+          <p style="font-size:14px">Plain statuses. Staff enter them from each lead's update and a publisher approves them. Definitions are agreed in Discovery:</p>
+          <ul style="padding-left:18px;font-size:14px;color:var(--ink-2);margin:8px 0 0">
+            <li><b>Not started</b>: in the plan, no work yet</li>
+            <li><b>Underway</b>: work and a lead are in place</li>
+            <li><b>Complete</b>: completion evidence accepted</li>
+            <li><b>Paused</b>: on hold, often for a partner or funding</li><li><b>Unknown</b>: no accepted update yet; never assumed complete</li>
+          </ul>
+        </div>
+        <div class="annot"><b>Design note:</b> We avoid “% complete” scores for actions that are not linear (councils, advocacy). Progress bars show only <i>milestones met / milestones defined</i>, so the number always ties back to a list the public can read.</div>
+        <div class="card"><h3>Data &amp; downloads</h3><p style="font-size:14px">Download the action tracker as CSV, or view the change history for any record.</p><p><button class="btn line" id="csv" type="button" style="padding:8px 14px;margin-top:8px">Download CSV</button></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRONX TODAY -->
+<section class="view" id="v-bronx">
+  <div class="band"><div class="wrap">
+    <span class="tag blue">The Bronx Today</span>
+    <h2 style="margin-top:10px">Key economic indicators</h2>
+    <p class="sub">The baseline conditions the CEDS sets out to change. Each indicator shows its source and year and is refreshed once a year.</p>
+    <div class="grid g4" id="indicators"></div>
+    <div class="annot"><b>Design note:</b> Values shown are cited from the March 2026 Public Draft CEDS. At build, each tile gets a trend sparkline and a “how this connects to the goals” link, and the yearly refresh is written into the staff manual.</div>
+  </div></div>
+</section>
+
+<!-- UPDATES -->
+<section class="view" id="v-updates">
+  <div class="band"><div class="wrap">
+    <span class="tag blue">Updates</span>
+    <h2 style="margin-top:10px">Implementation news &amp; announcements</h2>
+    <p class="sub">Quarterly progress notes, council meetings, funding awards and calls for partners.</p>
+    <div class="grid g3 news" id="allNews"></div>
+    <div class="card" style="margin-top:22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:space-between"><div><h3>Get CEDS updates by email</h3><p>One short email each quarter. Unsubscribe anytime.</p></div><a class="btn navy" href="#updates">Sign up</a></div>
+  </div></div>
+</section>
+
+<!-- BUSINESS -->
+<section class="view" id="v-business">
+  <div class="band"><div class="wrap">
+    <span class="tag blue">Do Business in the Bronx</span>
+    <h2 style="margin-top:10px">Opportunities tied to the CEDS</h2>
+    <p class="sub">The plan points to specific openings for businesses, entrepreneurs and investors. Each card leads to a contact or program.</p>
+    <div class="grid g3 biz">
+      <div class="card"><div class="ic">🏭</div><h3>Industrial Business Zones</h3><p>High-value sector recruitment for Bronx IBZs, with logistics and distribution at the center (Actions 6.1, 6.2).</p></div>
+      <div class="card"><div class="ic">🤝</div><h3>Sell to anchor institutions</h3><p>Supply-chain pathways that connect M/WBEs, cooperatives and social enterprises to hospitals and universities (4.3).</p></div>
+      <div class="card"><div class="ic">🔑</div><h3>Succession &amp; employee ownership</h3><p>Help for owners nearing retirement who want to sell to their employees (4.4).</p></div>
+      <div class="card"><div class="ic">⚡</div><h3>Decarbonization contracting</h3><p>Pooled demand for electrification and retrofit work, with local contracting (3.1.1, 4.5).</p></div>
+      <div class="card"><div class="ic">💵</div><h3>BXEDC business loans</h3><p>Small business lending and technical assistance from the Bronx Economic Development Corporation.</p></div>
+      <div class="card"><div class="ic">🚀</div><h3>Entrepreneur cohorts</h3><p>Cohort programs for new businesses in high-road and high-value sectors (6.4).</p></div>
+    </div>
+  </div></div>
+</section>
+
+</main>
+
+<footer><div class="wrap grid">
+  <div><b style="color:#fff">Bronx CEDS</b><p>Co-led by the Bronx Economic Development Corporation (BXEDC) and Our Bronx, with support from the U.S. Economic Development Administration.</p></div>
+  <div><b style="color:#fff">Explore</b><p><a href="#goals">Goals</a> · <a href="#dashboard">Dashboard</a> · <a href="#updates">Updates</a><br><a href="#about">Full CEDS report (PDF)</a> · <a href="#about">Executive Summary</a></p></div>
+  <div><b style="color:#fff">Accessibility</b><p>Designed to meet WCAG 2.2 AA. Plain-language summaries on every page. Core pages in English and Spanish.</p></div>
+</div><div class="wrap note" style="color:#a9a2d0;margin-top:16px">Concept mock-up · Illustrative data · Not a live site</div></footer>
+
+<!-- Drawer -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dTitle"><div class="dh" id="dh"></div><div class="db" id="db"></div></aside>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<!-- Assistant -->
+<button class="fab" id="fab" aria-expanded="false" aria-controls="chat">💬 Ask the Bronx CEDS</button>
+<div class="chat" id="chat" role="dialog" aria-label="Ask the Bronx CEDS assistant">
+  <div class="ch"><b>Ask the Bronx CEDS</b><small>Answers come only from approved CEDS content and cite their source. Demo uses fixed answers.</small></div>
+  <div class="cb" id="cb">
+    <div class="msg a">Hi! I can answer questions about the Bronx CEDS and its implementation. Try one of these:</div>
+    <div class="sugg" id="sugg"><button>What are the six goals?</button><button>Which actions help small businesses?</button><button>What is happening on broadband?</button><button>Who leads the CEDS?</button></div>
+  </div>
+  <form id="chatForm"><input id="chatIn" placeholder="Ask a question…" aria-label="Your question"><button>Ask</button></form>
+</div>
+
+<script>
+const GOALS=[
+ {n:1,name:"Governance and Coordination",short:"Governance",color:"#210070",pillar:1,
+  out:"The Bronx has a diverse and representative coordinating structure able to advance a long-term, borough-wide development agenda. Community organizations, residents, institutional partners and public leaders align action, track progress and guide implementation."},
+ {n:2,name:"Financial Infrastructure and Services",short:"Finance",color:"#0074BA",pillar:1,
+  out:"Bronx households, students, entrepreneurs and business owners have greater financial stability through stronger access to savings, lending, investment and business support, and mission-aligned capital invests directly in local projects."},
+ {n:3,name:"Environmental and Energy Resilience",short:"Resilience",color:"#00807f",pillar:2,
+  out:"Bronx residents, neighborhoods and businesses are less vulnerable to flooding, extreme heat, fires, power disruptions and other hazards, and share directly in the benefits of energy and resilience investments."},
+ {n:4,name:"Work, Enterprise, and Livelihood",short:"Work & Enterprise",color:"#c9531d",pillar:1,
+  out:"Bronx workers have quality jobs with fair pay, benefits and pathways for advancement. Bronx businesses, including small firms and M/WBEs, have stronger access to funding, contracts and markets, and more opportunities for shared ownership."},
+ {n:5,name:"Healthy Neighborhoods and Families",short:"Neighborhoods",color:"#a3307a",pillar:2,
+  out:"Bronx residents experience greater stability and safety in their housing, schools, workplaces and neighborhoods, and are better connected by reliable transit and safer streets."},
+ {n:6,name:"Innovation, Technology, and Growth",short:"Innovation",color:"#4d7c0f",pillar:2,
+  out:"Bronx workers, businesses and institutions have the knowledge, partnerships and support to take part in emerging sectors, and priority industries generate sustained growth and high-quality jobs."}
+];
+// Action text follows the Public Draft action plan. Status, lead, timeframe, milestones and updates are ILLUSTRATIVE.
+const NT="Near term (0–2 yrs)",MT="Mid term (2–4 yrs)",LT="Long term (4–5 yrs)";
+const A=[
+ ["1.1",1,"Establish a Bronx-wide Council for community wealth building implementation","underway","BXEDC & Our Bronx","Community orgs, anchors, labor, industry",NT,[["Charter drafted",1],["Members seated",1],["First public meeting",0],["Annual report",0]],"Council in place; meetings held; members by sector","EDA planning funds (sample)","Borough-wide","Cross-sector"],
+ ["1.2",1,"Convene a Bronx Resiliency Council for neighborhood emergency response and resilience hubs","planned","Sample: community & faith partners","Emergency management partners",MT,[["Convening partners identified",0],["Resilience hub sites mapped",0],["Pilot hub launched",0]],"Hubs active; residents reached","Seeking funding","Borough-wide","Resilience"],
+ ["1.3",1,"Create a CEDS evaluation partnership with an academic or research institution","underway","Sample: research partner","BXEDC, Our Bronx",NT,[["Partner selected",1],["Indicator framework set",0],["Baseline report",0]],"Outputs and outcomes reported yearly","In-kind (sample)","Borough-wide","Cross-sector"],
+ ["1.4",1,"Develop a public-facing funding and project mapping tool aligned with CEDS priorities","milestone","BXEDC","Our Bronx",NT,[["Platform recommendation",1],["Dashboard prototype",1],["Public launch",1]],"Projects mapped; $ tracked; site visits","CEDS implementation budget","Borough-wide","Cross-sector"],
+ ["2.1",2,"Sample: expand access to mission-aligned capital for local projects","planned","To be confirmed in the final Action Plan","To be confirmed",MT,[["Action confirmed in final Action Plan",0]],"To be set with the final Action Plan","To be confirmed","Borough-wide","Finance"],
+ ["3.1.1",3,"Aggregate demand for decarbonization and electrification services to access financing and support local contracting","underway","Sample: energy partner","Local contractors, building owners",NT,[["Building pipeline assembled",1],["Financing partner engaged",0],["First pooled procurement",0]],"Buildings enrolled; local contract $","State clean energy programs (sample)","South Bronx","Clean energy"],
+ ["3.1.2",3,"Support and expand existing efforts to electrify commercial freight","attention","Sample: freight working group","Hunts Point businesses",MT,[["Fleet inventory",1],["Charging site identified",0],["Funding application",0]],"Electric trucks deployed; emissions avoided","Funding gap identified","Hunts Point / Port Morris","Logistics"],
+ ["3.2",3,"Create shared-ownership models for renewable energy to lower energy costs","planned","Sample: community energy partner","Housing co-ops",MT,[["Model options study",0],["Pilot site",0]],"Households served; savings","Seeking funding","Borough-wide","Clean energy"],
+ ["3.3",3,"Create waterfront plan(s) balancing infrastructure, public access, economic activity and safety","planned","Sample: waterfront coalition","City agencies",LT,[["Scope agreed",0],["Community sessions",0],["Plan adopted",0]],"Plan adopted; acres accessible","TBD","Waterfront","Resilience"],
+ ["4.1",4,"Grow cooperative models within healthcare support occupations","underway","Sample: cooperative developer","Home care employers, unions",NT,[["Feasibility study",1],["Cohort recruited",1],["New co-op launched",0]],"Worker-owners; wages","Philanthropy (sample)","Borough-wide","Healthcare"],
+ ["4.2",4,"Help healthcare support workers access better pay and career advancement","underway","Sample: workforce partner","Hospitals, training providers",NT,[["Career ladder mapped",1],["Training cohort 1",0]],"Workers trained; wage gains","Workforce grants (sample)","Borough-wide","Healthcare"],
+ ["4.3",4,"Connect M/WBEs, cooperatives and social enterprises with anchor institution supply chains","underway","BXEDC","Hospitals, universities",NT,[["Anchor spend analysis",1],["Supplier directory",1],["First matchmaking event",1],["Contracts tracked",0]],"Contracts awarded to Bronx firms; $","BXEDC programs (sample)","Borough-wide","Cross-sector"],
+ ["4.4",4,"Support succession planning for employee ownership among retirement-age owners","planned","Sample: ownership center","BXEDC lending",MT,[["Owner outreach list",0],["Conversion workshops",0]],"Conversions completed; jobs retained","Seeking funding","Borough-wide","Small business"],
+ ["4.5",4,"Grow and scale Bronx-based businesses in decarbonizing industries","planned","Sample: business accelerator","Contractors",MT,[["Cohort design",0]],"Businesses scaled; revenue growth","TBD","Borough-wide","Clean energy"],
+ ["4.6",4,"Align life sciences talent pipelines with Bronx educational institutions","underway","Sample: higher-ed partner","Life sciences employers",MT,[["Employer roundtable",1],["Curriculum pilot",0]],"Students placed; internships","TBD","Borough-wide","Life sciences"],
+ ["5.1",5,"Create a Bronx-based capital fund for acquisition and predevelopment of shared-equity housing","attention","Sample: CDFI partner","CLTs, HDFC co-ops",MT,[["Fund design",1],["Anchor investors",0],["First close",0]],"Units preserved; $ deployed","Capital gap identified","Borough-wide","Housing"],
+ ["5.2",5,"Use existing laws to drive building retrofits in targeted ZIP codes","underway","Sample: housing partner","Building owners",NT,[["Target ZIPs selected",1],["Owner outreach",0]],"Buildings retrofitted","State & city programs (sample)","Targeted ZIP codes","Housing"],
+ ["5.3.1",5,"Counter displacement and build community wealth in the Cross-Bronx Expressway corridor","underway","Sample: corridor coalition","City & state agencies",MT,[["Corridor working group",1],["Community priorities report",0]],"Residents engaged; investments aligned","Federal reconnecting communities (sample)","Cross-Bronx corridor","Transportation"],
+ ["5.3.2",5,"Advocate for interborough transit options such as ferry and Triboro service","underway","Sample: transit advocates","Elected officials",LT,[["Advocacy agenda",1]],"Service commitments","Advocacy","Borough-wide","Transportation"],
+ ["5.4",5,"Advocate for policy solutions to rising multifamily insurance costs","planned","Sample: housing coalition","State legislators",MT,[["Policy brief",0]],"Policy adopted","Advocacy","Borough-wide","Housing"],
+ ["5.5",5,"Develop a borough-wide broadband and WiFi strategy with shared ownership","planned","Sample: digital equity partner","Libraries, housing providers",MT,[["Coverage gap map",0],["Strategy draft",0]],"Households connected","Seeking funding","Borough-wide","Digital"],
+ ["5.6",5,"Promote best practices for youth learning and job training, ages 16–24","underway","Sample: youth workforce network","Schools, employers",NT,[["Program inventory",1],["Best practices guide",0]],"Youth enrolled and placed","Workforce grants (sample)","Borough-wide","Workforce"],
+ ["6.1",6,"Advance logistics and distribution innovation to benefit Bronx workers and businesses","underway","Sample: logistics partner","Hunts Point market businesses",MT,[["Supply chain node study",1],["Pilot project",0]],"Jobs; local firm participation","TBD","Hunts Point / Port Morris","Logistics"],
+ ["6.2",6,"Convene a partnership to identify high-value sectors for IBZ recruitment","underway","BXEDC","Industrial partners",NT,[["Partnership convened",1],["Target sectors set",1],["Recruitment plan",0]],"Firms recruited; IBZ jobs","BXEDC (sample)","Industrial Business Zones","Industrial"],
+ ["6.3",6,"Partner with universities on an innovation hub for advanced manufacturing and digital fabrication","planned","Sample: university partner","Manufacturers",LT,[["Partner MOU",0],["Space identified",0]],"Hub open; users trained","Seeking funding","Location to be confirmed","Advanced manufacturing"],
+ ["6.4",6,"Develop cohort-based entrepreneur programs in high-road and high-value sectors","underway","Sample: entrepreneurship partner","BXEDC lending",NT,[["Curriculum",1],["Cohort 1 graduated",0]],"Businesses formed; loans made","Philanthropy (sample)","Borough-wide","Small business"]
+].map(r=>({id:r[0],g:r[1],title:r[2],status:r[3],lead:r[4],partners:r[5],time:r[6],ms:r[7],measure:r[8],funding:r[9],geo:r[10],sector:r[11]}));
+const ST={planned:"Not started",underway:"Underway",milestone:"Complete",attention:"Paused"};
+const ORDER=["milestone","underway","attention","planned"];
+const NEWS=[
+ ["Feb 2027","1.4","The Bronx CEDS website and implementation dashboard are live","The public can now follow every CEDS action, its lead and its status in one place."],
+ ["Jan 2027","4.3","First anchor-institution supplier matchmaking event held","Sample: Bronx M/WBEs met with procurement teams from hospital and university partners."],
+ ["Jan 2027","6.2","IBZ target-sector partnership sets priority industries","Sample: the partnership agreed on priority sectors for industrial recruitment."],
+ ["Dec 2026","1.1","Community wealth-building council seats founding members","Sample: members represent community organizations, anchors, labor and industry."],
+ ["Dec 2026","3.1.2","Freight electrification effort seeks funding partners","Sample: a fleet inventory is done. A charging site and funding are next."],
+ ["Nov 2026","5.3.1","Cross-Bronx corridor working group begins meeting","Sample: residents and agencies started setting corridor priorities."]
+];
+const IND=[
+ ["~1.4M","Residents (2023)","Up 1.57% since 2013","CEDS Public Draft; ACS"],
+ ["92%","Residents who are people of color","57% Hispanic, 28.2% Black","CEDS Public Draft; ACS 2023"],
+ ["57.3%","Households speaking a language other than English at home","vs. 31% citywide","CEDS Public Draft; ACS 2023"],
+ ["36.2%","Foreign-born population","Up 6.9% since 2013","CEDS Public Draft; ACS 2023"],
+ ["59.4%","Labor force participation","Lowest of the five boroughs","CEDS Public Draft; 2023"],
+ ["33.7%","Jobs in healthcare & social assistance","Largest employment sector","CEDS Public Draft; 2022"],
+ ["31%","Residents with debt 60+ days past due","Ranges 19%–38% by neighborhood","CEDS Public Draft; Urban Institute"],
+ ["11.8%","Of the employment base is self-employed (2024)","Highest of the five boroughs","CEDS Public Draft; NYS Dept. of Labor"]
+];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const G=n=>GOALS.find(g=>g.n===n);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const stat=s=>`<span class="status ${s}"><i aria-hidden="true"></i>${ST[s]}</span>`;
+const done=a=>a.ms.filter(m=>m[1]).length;
+
+// routing
+const VIEWS=["home","about","goals","dashboard","bronx","updates","business"];
+let CUR="#home";
+document.addEventListener("click",e=>{const a=e.target.closest('a[href^="#"]');if(!a||a.classList.contains("skip"))return;e.preventDefault();go(a.getAttribute("href"))});
+function go(h){CUR=h;try{history.pushState(null,"",h)}catch(_){}if($("#drawer").classList.contains("on"))closeAct(true);route()}
+addEventListener("popstate",()=>{CUR=location.hash||"#home";route()});
+function route(){let h=(CUR||"#home").slice(1);let [v,arg]=h.split("/");if(!VIEWS.includes(v))v="home";
+ $$("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+ $$("nav.main a").forEach(a=>a.toggleAttribute("aria-current",a.getAttribute("href")==="#"+v)&&a.setAttribute("aria-current","page"));
+ if(v==="dashboard"&&arg){ if(arg.startsWith("g")){$("#fGoal").value=arg.slice(1);renderDash()} else {renderDash();openAct(arg)} }
+ window.scrollTo(0,0)}
+addEventListener("hashchange",()=>{CUR=location.hash||"#home";route()});
+
+// home
+function kpiHTML(list){const c=s=>list.filter(a=>a.status===s).length,n=v=>`<span class="cnt">${v}</span>`;
+ return `<div class="kpi"><div class="v">${n(list.length)}</div><div class="l">CEDS actions tracked</div></div>
+ <div class="kpi"><div class="v">${n(c("underway")+c("milestone"))}</div><div class="l">Underway or complete</div></div>
+ <div class="kpi"><div class="v">${n(list.reduce((s,a)=>s+done(a),0))}<span style="font-size:18px;opacity:.7"> / ${list.reduce((s,a)=>s+a.ms.length,0)}</span></div><div class="l">Milestones met</div></div>
+ <div class="kpi"><div class="v">${n(c("attention"))}</div><div class="l">Paused: seeking a partner or funding</div></div>`}
+$("#homeKpis").innerHTML=kpiHTML(A);
+$("#goalCards").innerHTML=GOALS.map(g=>{const n=A.filter(a=>a.g===g.n);return `<a class="card goalcard" style="--gc:${g.color}" href="#goals"><span class="gnum">${g.n}</span><h3>${g.name}</h3><p>${esc(g.out.split(". ")[0])}.</p><span class="more">${n.length} action${n.length>1?"s":""} · ${n.filter(a=>a.status!=="planned").length} active →</span></a>`}).join("");
+const newsCard=n=>`<a class="card" style="text-decoration:none;color:inherit;display:block" href="#dashboard/${n[1]}"><div class="date">${n[0]} · Action ${n[1]}</div><h3 style="margin-top:6px">${n[2]}</h3><p>${n[3]}</p></a>`;
+$("#homeNews").innerHTML=NEWS.slice(0,3).map(newsCard).join("");
+$("#allNews").innerHTML=NEWS.map(newsCard).join("");
+$("#indicators").innerHTML=IND.map(i=>`<div class="card stat"><div class="v">${i[0]}</div><div class="l">${i[1]}</div><p style="font-size:13.5px">${i[2]}</p><div class="src">Source: ${i[3]}</div></div>`).join("");
+
+// goals page
+$("#goalList").innerHTML=GOALS.map(g=>`<details class="goal" style="--gc:${g.color}" ${g.n===1?"open":""}><summary><span class="gnum">${g.n}</span><div><h3>${g.name}</h3><span class="tag ${g.pillar===1?"blue":""}">Pillar ${g.pillar}</span></div></summary><div class="body"><p><b>What success looks like:</b> ${g.out}</p><ul class="actlist">${A.filter(a=>a.g===g.n).map(a=>`<li><code>${a.id}</code><div style="flex:1">${esc(a.title)}</div><a href="#dashboard/${a.id}" aria-label="Track action ${a.id}">${stat(a.status)}</a></li>`).join("")}</ul><p style="margin-top:12px"><a href="#dashboard/g${g.n}">See Goal ${g.n} on the dashboard →</a></p></div></details>`).join("");
+
+// dashboard
+$("#fGoal").innerHTML+=GOALS.map(g=>`<option value="${g.n}">${g.n} · ${g.name}</option>`).join("");
+let activeStatus=new Set(),view="cards",cdSel=0;
+const uniq=k=>[...new Set(A.map(a=>a[k]))].sort();
+[["#fLead","lead"],["#fGeo","geo"],["#fSector","sector"]].forEach(([s,k])=>$(s).innerHTML+=uniq(k).map(v=>`<option>${esc(v)}</option>`).join(""));
+// Schematic tile map of the 12 Bronx community districts. Sample placements only.
+const CDS=[[8,"Riverdale, Kingsbridge"],[7,"Bedford Park, Norwood"],[12,"Williamsbridge, Wakefield"],null,[5,"Fordham, University Heights"],[6,"Belmont, East Tremont"],[11,"Morris Park, Pelham Parkway"],[10,"Throgs Neck, Co-op City"],[4,"Highbridge, Concourse"],[3,"Morrisania, Crotona"],[9,"Soundview, Parkchester"],null,[1,"Mott Haven, Melrose"],[2,"Hunts Point, Longwood"],null,null];
+const GEO_CD={"South Bronx":[1,2,3,4],"Hunts Point / Port Morris":[1,2],"Waterfront":[1,2,9,10],"Targeted ZIP codes":[4,5,6],"Cross-Bronx corridor":[4,5,6,9],"Industrial Business Zones":[1,2,3,9,12]};
+const inCD=(a,cd)=>(GEO_CD[a.geo]||[]).includes(cd);
+function mapHTML(L){const bw=L.filter(a=>a.geo==="Borough-wide").length,tb=L.filter(a=>a.geo==="Location to be confirmed").length;
+ return `<h3 style="margin:0 0 4px">Where the work is</h3><p class="note" style="margin:0">Select a community district to list its place-based actions. ${bw} borough-wide action${bw===1?"":"s"} apply everywhere${tb?`, and ${tb} with no confirmed location stay${tb===1?"s":""} in the list`:""}.</p>
+ <div class="cdmap" role="group" aria-label="Bronx community districts">${CDS.map(c=>{if(!c)return `<span class="cd blank" aria-hidden="true"></span>`;const n=L.filter(a=>inCD(a,c[0])).length;
+  return `<button class="cd" type="button" data-cd="${c[0]}" aria-pressed="${cdSel===c[0]}" style="background:rgba(0,116,186,${n?Math.min(.1+.08*n,.5):0})"><b>District ${c[0]}</b><small>${c[1]}</small><span class="n">${n} action${n===1?"":"s"}</span></button>`}).join("")}</div>
+ ${cdSel?`<button class="btn line" type="button" id="cdClear" style="padding:6px 12px">Show all districts</button>`:""}
+ <div class="annot"><b>Design note:</b> A schematic of the 12 community districts with sample placements. The built map plots locations that BXEDC and Our Bronx supply and validate, and can add funding by project (CEDS Action 1.4). Actions without a location always remain in the list and table.</div>`}
+$("#statusChips").innerHTML=ORDER.map(s=>`<button class="chip" data-s="${s}" aria-pressed="false">${stat(s)}</button>`).join("");
+$("#legend").innerHTML=ORDER.map(stat).join("");
+function filtered(){const g=$("#fGoal").value,p=$("#fPillar").value,t=$("#fTime").value,ld=$("#fLead").value,ge=$("#fGeo").value,se=$("#fSector").value,q=$("#fText").value.trim().toLowerCase();
+ return A.filter(a=>(!g||a.g==g)&&(!p||G(a.g).pillar==p)&&(!t||a.time===t)&&(!ld||a.lead===ld)&&(!ge||a.geo===ge)&&(!se||a.sector===se)&&(!activeStatus.size||activeStatus.has(a.status))&&(!q||[a.id,a.title,a.lead,a.partners,a.sector,a.geo,G(a.g).name].join(" ").toLowerCase().includes(q)))}
+function renderDash(){const L=filtered(),C=view==="map"&&cdSel?L.filter(a=>inCD(a,cdSel)):L;
+ $("#pulse").innerHTML=pulseHTML(L);countAll($("#pulse"),700);
+ $$("#goalStrip .gt").forEach(b=>b.setAttribute("aria-pressed",$("#fGoal").value===b.dataset.g));
+ $("#actCount").textContent=`${C.length} action${C.length===1?"":"s"}`+(view==="map"&&cdSel?` in District ${cdSel}`:"");
+ $("#map").innerHTML=mapHTML(L);
+ $("#acts").innerHTML=C.length?C.map(actCard).join(""):`<div class="empty">No actions match these filters. <button class="btn line" onclick="resetF()" style="padding:6px 12px">Reset filters</button></div>`;
+ $("#board").innerHTML=boardHTML(L);$("#road").innerHTML=roadHTML(L);
+ $("#tbl").innerHTML=`<table class="t"><thead><tr><th>ID</th><th>Action</th><th>Goal</th><th>Lead</th><th>Area</th><th>Timeframe</th><th>Status</th><th>Milestones</th></tr></thead><tbody>${L.map(a=>`<tr><td>${a.id}</td><td><a href="#dashboard/${a.id}">${esc(a.title)}</a></td><td>${a.g}</td><td>${esc(a.lead)}</td><td>${esc(a.geo)}</td><td>${a.time}</td><td>${stat(a.status)}</td><td>${done(a)}/${a.ms.length}</td></tr>`).join("")}</tbody></table>`;
+ $("#byGoal").innerHTML=GOALS.map(g=>{const ga=L.filter(a=>a.g===g.n);if(!ga.length)return `<div class="row"><b>${g.n}. ${g.short}</b><span class="note">none in view</span><span></span></div>`;
+  return `<div class="row"><b title="${g.name}">${g.n}. ${g.short}</b><div class="sbar">${ORDER.map(s=>{const c=ga.filter(a=>a.status===s).length;return c?`<span class="${s}" style="flex:${c}" data-tip="Goal ${g.n} · ${ST[s]}: ${c} of ${ga.length}"></span>`:""}).join("")}</div><span class="note">${ga.length}</span></div>`}).join("");
+ $("#fund").innerHTML=fundHTML(L);$("#feed").innerHTML=feedHTML(L);
+}
+window.resetF=()=>{$("#fGoal").value="";$("#fPillar").value="";$("#fTime").value="";$("#fLead").value="";$("#fGeo").value="";$("#fSector").value="";$("#fText").value="";cdSel=0;activeStatus.clear();$$(".chip").forEach(c=>c.setAttribute("aria-pressed","false"));renderDash()};
+["#fGoal","#fPillar","#fTime","#fLead","#fGeo","#fSector"].forEach(s=>$(s).onchange=renderDash);$("#fText").oninput=renderDash;$("#fReset").onclick=resetF;
+$("#statusChips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;const s=b.dataset.s;activeStatus.has(s)?activeStatus.delete(s):activeStatus.add(s);b.setAttribute("aria-pressed",activeStatus.has(s));renderDash()};
+$("#acts").onclick=e=>{const b=e.target.closest(".act");if(b)openAct(b.dataset.id)};
+function setView(v){view=["cards","board","roadmap","map","table"].includes(v)?v:"cards";$("#acts").hidden=!(view==="cards"||view==="map");$("#tbl").hidden=view!=="table";$("#map").hidden=view!=="map";$("#board").hidden=view!=="board";$("#road").hidden=view!=="roadmap";
+ [["#vCards","cards"],["#vBoard","board"],["#vRoad","roadmap"],["#vMap","map"],["#vTable","table"]].forEach(([q,k])=>$(q).setAttribute("aria-pressed",view===k));renderDash()}
+[["#vCards","cards"],["#vBoard","board"],["#vRoad","roadmap"],["#vMap","map"],["#vTable","table"]].forEach(([q,k])=>$(q).onclick=()=>setView(k));
+$("#map").onclick=e=>{const b=e.target.closest(".cd[data-cd]");if(b){const n=+b.dataset.cd;cdSel=cdSel===n?0:n;renderDash()}else if(e.target.id==="cdClear"){cdSel=0;renderDash()}};
+$("#csv").onclick=()=>{const rows=[["id","goal","action","status","lead","partners","timeframe","milestones_met","milestones_total","measure","funding","geography","sector"],...filtered().map(a=>[a.id,G(a.g).name,a.title,ST[a.status],a.lead,a.partners,a.time,done(a),a.ms.length,a.measure,a.funding,a.geo,a.sector])];
+ const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");const u=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const l=document.createElement("a");l.href=u;l.download="bronx-ceds-actions-SAMPLE.csv";l.click();setTimeout(()=>URL.revokeObjectURL(u),800)};
+// tooltip
+const tip=$("#tip");document.addEventListener("mousemove",e=>{const t=e.target.closest("[data-tip]");if(t){tip.textContent=t.dataset.tip;tip.style.opacity=1;tip.style.left=Math.min(e.clientX+12,innerWidth-tip.offsetWidth-8)+"px";tip.style.top=e.clientY+14+"px"}else tip.style.opacity=0});
+
+// drawer
+let lastFocus;
+function openAct(id){const a=A.find(x=>x.id===id);if(!a)return;const g=G(a.g);lastFocus=document.activeElement;
+ const dr=$("#drawer");dr.style.setProperty("--gc",g.color);
+ const upd=NEWS.filter(n=>n[1]===a.id);
+ $("#dh").innerHTML=`<button class="close" id="dClose">Close ✕</button><div class="note">Goal ${g.n} · ${g.name} · Pillar ${g.pillar}</div><h3 id="dTitle" style="margin-top:6px">${a.id} · ${esc(a.title)}</h3>${stat(a.status)}`;
+ $("#db").innerHTML=`<dl class="facts"><dt>Lead</dt><dd>${esc(a.lead)}</dd><dt>Partners</dt><dd>${esc(a.partners)}</dd><dt>Timeframe</dt><dd>${a.time}</dd><dt>Geography</dt><dd>${a.geo}</dd><dt>Sector</dt><dd>${a.sector}</dd><dt>Funding</dt><dd>${esc(a.funding)}</dd><dt>Measures</dt><dd>${esc(a.measure)}</dd></dl>
+ <h4>Milestones · ${done(a)} of ${a.ms.length} met</h4><ul class="ms">${a.ms.map(m=>`<li><span class="ck ${m[1]?"done":""}" aria-hidden="true">${m[1]?"✓":""}</span>${m[0]}<span class="note" style="margin-left:auto">${m[1]?"Met":"Not yet"}</span></li>`).join("")}</ul>
+ <h4>Progress updates</h4>${upd.length?upd.map(n=>`<div class="upd"><time>${n[0]}</time><b>${n[2]}</b><br>${n[3]}</div>`).join(""):`<div class="upd"><time>Next update due: end of quarter</time>No public update yet.</div>`}
+ <h4>Related</h4><p style="font-size:14.5px">Other actions in Goal ${g.n}: ${A.filter(x=>x.g===a.g&&x.id!==a.id).map(x=>`<a href="#dashboard/${x.id}">${x.id}</a>`).join(", ")||"none"}</p>
+ <p class="note" style="margin-top:18px">Record last approved: Feb 2027 (sample) · <a href="#dashboard">View change history</a> · Want to help? <a href="#updates">Contact the CEDS team</a></p>
+ <div class="annot"><b>Design note:</b> These are the RFP's minimum fields: goal, strategy, action, lead and partners, timeframe, status, milestones, measures, funding, related projects and updates. Staff edit them in a simple form, and nothing goes public until it is approved.</div>`;
+ dr.classList.add("on");dr.setAttribute("aria-hidden","false");$("#scrim").classList.add("on");$("#dClose").focus();$("#dClose").onclick=closeAct}
+function closeAct(quiet){$("#drawer").classList.remove("on");$("#drawer").setAttribute("aria-hidden","true");$("#scrim").classList.remove("on");if(quiet===true)return;if(CUR.split("/").length>1){CUR="#dashboard";try{history.replaceState(null,"","#dashboard")}catch(_){}}lastFocus&&lastFocus.focus&&lastFocus.focus()}
+$("#scrim").onclick=closeAct;addEventListener("keydown",e=>{if(e.key==="Escape"){closeAct();$("#chat").classList.remove("on");$("#fab").setAttribute("aria-expanded","false")}});
+
+// assistant (fixed demo answers)
+const QA=[
+ [/six goals|goals|goal areas/,()=>"The CEDS has six goal areas: "+GOALS.map(g=>g.n+". "+g.name).join("; ")+".","Vision & Goals, p. 76–77","#goals"],
+ [/small business|business|m\/?wbe|entrepreneur/,()=>"Several actions focus on businesses: 4.3 connects M/WBEs and cooperatives to anchor-institution supply chains, 4.4 supports succession to employee ownership, and 6.4 runs entrepreneur cohorts.","Action Plan, Goals 4 & 6","#business"],
+ [/broadband|wifi|internet/,()=>{const a=A.find(x=>x.id==="5.5");return `Action 5.5 calls for a borough-wide broadband and WiFi strategy with shared ownership. Current status: ${ST[a.status]} (sample).`},"Action Plan, Goal 5 · Dashboard 5.5","#dashboard/5.5"],
+ [/who|lead|run|partner/,()=>"The CEDS was co-led by BXEDC and Our Bronx with a cross-sector Strategy Committee. Action 1.1 sets up a Bronx-wide council to guide implementation.","Introduction; Action 1.1","#about"],
+ [/freight|truck|hunts point|logistic/,()=>"Action 3.1.2 supports electrifying commercial freight, and 6.1 advances logistics innovation. In this sample, 3.1.2 is paused while it seeks funding.","Action Plan, Goals 3 & 6","#dashboard/3.1.2"]
+];
+function ask(q){const cb=$("#cb");cb.insertAdjacentHTML("beforeend",`<div class="msg u">${esc(q)}</div>`);const hit=QA.find(x=>x[0].test(q.toLowerCase()));
+ cb.insertAdjacentHTML("beforeend",hit?`<div class="msg a">${hit[1]()}<a class="cite" href="${hit[3]}">📄 Source: ${hit[2]}</a></div>`:`<div class="msg a">I couldn't find that in the approved CEDS content, so I won't guess. Try the <a href="#goals">goals page</a> or <a href="#updates">contact the CEDS team</a>.</div>`);cb.scrollTop=cb.scrollHeight}
+$("#fab").onclick=()=>{const on=$("#chat").classList.toggle("on");$("#fab").setAttribute("aria-expanded",on);if(on)$("#chatIn").focus()};
+$("#sugg").onclick=e=>{if(e.target.tagName==="BUTTON")ask(e.target.textContent)};
+$("#chatForm").onsubmit=e=>{e.preventDefault();const v=$("#chatIn").value.trim();if(v){ask(v);$("#chatIn").value=""}};
+$("#annotToggle").onchange=e=>document.body.classList.toggle("noannot",!e.target.checked);
+
+// ===== dashboard v2 components =====
+const SC={planned:"#7a8794",underway:"#1f6fc5",milestone:"#3d7a12",attention:"#b25e00"};
+const IC={g1:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="M12 7.5v4M12 11.5l-5.5 4.5M12 11.5l5.5 4.5"/>',
+ g2:'<circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-1-1.4-1.4-2.5-1.4-1.5 0-2.6.8-2.6 2 0 2.8 5.3 1.3 5.3 4.2 0 1.3-1.2 2.1-2.7 2.1-1.2 0-2.2-.5-2.7-1.5M12 6v1.8M12 16.2V18"/>',
+ g3:'<path d="M13 2L5 13.5h6L10 22l8-11.5h-6z"/>',
+ g4:'<rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M9 7.5V5.5A1.5 1.5 0 0110.5 4h3A1.5 1.5 0 0115 5.5v2M3 13h18"/>',
+ g5:'<path d="M3.5 11.5L12 4l8.5 7.5M6 10v9.5h12V10M10 19.5v-5h4v5"/>',
+ g6:'<path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0012 3z"/>',
+ flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',pin:'<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0113 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+ user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.5 3.5-5.5 7-5.5s6.2 2 7 5.5"/>',clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+ pie:'<path d="M12 3a9 9 0 109 9h-9z"/><path d="M15 3.5A9 9 0 0120.5 9H15z"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>'};
+const ico=(n,z)=>`<svg class="ico" width="${z}" height="${z}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+const pill=t=>`<span class="pill ${t}"><i aria-hidden="true"></i>${ST[t]}</span>`;
+const dots=a=>`<span class="a2ms">${a.ms.map(m=>`<i class="${m[1]?"on":""}" title="${esc(m[0])}"></i>`).join("")}<em>${done(a)} of ${a.ms.length} milestones</em></span>`;
+const needs=a=>a.status==="attention"||/seeking|gap/i.test(a.funding);
+function actCard(a,i){const g=G(a.g);return `<button class="act act2" style="--gc:${g.color};--i:${Math.min(i,12)}" data-id="${a.id}"><span class="a2top"><span class="a2ico">${ico("g"+g.n,17)}</span><span>${a.id} · ${g.short}</span>${pill(a.status)}</span><span class="a2t">${esc(a.title)}</span><span class="a2meta"><span>${ico("user",14)}${esc(a.lead)}</span><span>${ico("clock",14)}${a.time.split(" (")[0]}</span><span>${ico("pin",14)}${esc(a.geo)}</span>${needs(a)?`<span class="a2need">${ico("flag",14)}${esc(a.funding)}</span>`:""}</span>${dots(a)}</button>`}
+function pulseHTML(L){const n=L.length,cnt=t=>L.filter(a=>a.status===t).length,ms=L.reduce((t,a)=>t+a.ms.length,0),dn=L.reduce((t,a)=>t+done(a),0),pc=ms?Math.round(dn/ms*100):0,CC=2*Math.PI*46;let acc=0;
+ const segs=ORDER.map(t=>{const c=cnt(t);if(!c)return"";const len=c/n*CC,o=`<circle class="seg" data-fs="${t}" data-tip="${ST[t]}: ${c} of ${n}" cx="60" cy="60" r="46" fill="none" stroke="${SC[t]}" stroke-width="16" stroke-dasharray="${Math.max(len-2,1)} ${CC}" stroke-dashoffset="${-acc}" transform="rotate(-90 60 60)"/>`;acc+=len;return o}).join("");
+ const fr=[.12,.25,.42,.63,.82,1],lab=["Q4","Q1","Q2","Q3","Q4","Q1"],pts=fr.map((f,i)=>[10+i*44,74-f*56]),d="M"+pts.map(q=>q.join(",")).join("L"),nd=L.filter(needs);
+ return `<div class="pn"><h3>${ico("pie",15)}Status mix</h3><div class="dn"><svg class="donut" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Status mix of ${n} actions"><circle cx="60" cy="60" r="46" fill="none" stroke="#eef0f3" stroke-width="16"/>${segs}<text class="dnc cnt" x="60" y="66">${n}</text><text class="dnl" x="60" y="82">actions</text></svg><div class="dleg">${ORDER.map(t=>`<button type="button" data-fs="${t}" aria-pressed="${activeStatus.has(t)}"><i style="background:${SC[t]}"></i>${ST[t]}<b>${cnt(t)}</b></button>`).join("")}</div></div></div>
+ <div class="pn"><h3>${ico("check",15)}Milestones met</h3><svg class="gauge" width="176" height="100" viewBox="0 0 120 68" aria-hidden="true"><path d="M8,62A52,52 0 0 1 112,62" fill="none" stroke="#e6ebf0" stroke-width="12" stroke-linecap="round"/><path class="fg" pathLength="100" d="M8,62A52,52 0 0 1 112,62" fill="none" stroke="#EA672D" stroke-width="12" stroke-linecap="round" stroke-dasharray="${pc} 100"/></svg><div class="gv"><b class="cnt">${pc}%</b><small>${dn} of ${ms} milestones</small></div></div>
+ <div class="pn"><h3>${ico("trend",15)}Momentum<span class="smp">sample trend</span></h3><svg class="spark" viewBox="0 0 240 96" role="img" aria-label="Milestones met by quarter, a sample trend rising to ${dn}"><defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EA672D" stop-opacity=".3"/><stop offset="1" stop-color="#EA672D" stop-opacity="0"/></linearGradient></defs><path class="ar" d="${d}L230,78L10,78Z"/><path class="ln" pathLength="1" d="${d}"/><circle class="pp" cx="230" cy="18" r="5"/><circle class="pt" cx="230" cy="18" r="4.5"/>${pts.map((q,i)=>`<text x="${q[0]}" y="92">${lab[i]}</text>`).join("")}<text class="sv" x="208" y="14">${dn}</text></svg></div>
+ <div class="pn"><h3>${ico("flag",15)}Needs a partner or funding<b class="nb">${nd.length}</b></h3><div class="need">${nd.length?nd.slice(0,3).map(a=>`<button class="nrow" type="button" data-id="${a.id}">${ico("flag",15)}<span><b>${a.id} · ${esc(a.title)}</b><small>${esc(a.funding)}</small></span></button>`).join("")+(nd.length>3?`<p class="note" style="margin:2px 0 0">and ${nd.length-3} more in the list</p>`:""):`<p class="note">Nothing flagged in this view.</p>`}</div></div>`}
+function boardHTML(L){return `<div class="board">${["planned","underway","attention","milestone"].map((t,k)=>{const c=L.filter(a=>a.status===t);return `<div class="bcol" style="animation-delay:${k*70}ms"><h4>${pill(t)}<b>${c.length}</b></h4>${c.map((a,i)=>`<button class="bc" type="button" data-id="${a.id}" style="--gc:${G(a.g).color};--i:${Math.min(i,10)}"><b>${a.id} · ${G(a.g).short}</b><span class="bt">${esc(a.title)}</span>${dots(a)}</button>`).join("")||`<p class="note" style="margin:4px">None in this view</p>`}</div>`}).join("")}</div>`}
+const SPAN={[NT]:[0,2],[MT]:[2,4],[LT]:[4,5]};
+function roadHTML(L){let i=0;return `<div class="road"><div class="rin"><div class="rhead"><span></span><div class="ryrs">${[1,2,3,4,5].map(y=>`<span>Year ${y}</span>`).join("")}</div></div>${GOALS.map(g=>{const c=L.filter(a=>a.g===g.n);if(!c.length)return"";return `<div class="rg" style="--gc:${g.color}">${ico("g"+g.n,15)}${g.n}. ${esc(g.name)}</div>${c.map(a=>{const [b,e]=SPAN[a.time];return `<div class="rrow"><small>${a.id} · ${ST[a.status]}</small><div class="rtrack"><button class="rb" type="button" data-id="${a.id}" aria-label="Action ${a.id}: ${esc(a.title)}. ${a.time}. ${ST[a.status]}." data-tip="${a.id} · ${esc(a.title)} · ${done(a)} of ${a.ms.length} milestones" style="--gc:${g.color};--i:${Math.min(i++,22)};left:${b*20}%;width:${(e-b)*20}%"><i style="width:${done(a)/a.ms.length*100}%"></i></button></div></div>`}).join("")}`}).join("")||`<p class="note">No actions match these filters.</p>`}<div class="rnow" aria-hidden="true"></div></div><p class="note" style="margin:10px 0 0">Bars span each action's timeframe. The darker fill shows milestones met. Sample timing.</p></div>`}
+const FC=[["Source identified","#3d7a12"],["Seeking funding","#EA672D"],["Gap identified","#b25e00"],["Not yet set","#aab3bd"],["Advocacy, no funding","#7b6fd0"]];
+const fcat=a=>/seeking/i.test(a.funding)?1:/gap/i.test(a.funding)?2:/^(TBD|To be confirmed)/i.test(a.funding)?3:/advocacy/i.test(a.funding)?4:0;
+function fundHTML(L){const c=FC.map((f,k)=>L.filter(a=>fcat(a)===k).length);if(!L.length)return `<p class="note">No actions in view.</p>`;
+ return `<div class="sbar" style="height:16px;margin:10px 0 6px">${FC.map((f,k)=>c[k]?`<span style="flex:${c[k]};background:${f[1]}" data-tip="${f[0]}: ${c[k]} of ${L.length}"></span>`:"").join("")}</div>${FC.map((f,k)=>`<div class="frow"><i style="background:${f[1]}"></i>${f[0]}<b>${c[k]}</b></div>`).join("")}<p class="note" style="margin:8px 0 0">Sample funding status by action.</p>`}
+function feedHTML(L){const ids=new Set(L.map(a=>a.id)),n=NEWS.filter(x=>ids.has(x[1])).slice(0,4);return n.length?`<ol class="feed">${n.map((x,k)=>`<li style="animation-delay:${k*90}ms"><time>${x[0]} · Action ${x[1]}</time><a href="#dashboard/${x[1]}">${esc(x[2])}</a></li>`).join("")}</ol>`:`<p class="note">No recent updates for these filters.</p>`}
+$("#goalStrip").innerHTML=GOALS.map((g,k)=>{const c=A.filter(a=>a.g===g.n),ms=c.reduce((t,a)=>t+a.ms.length,0),dn=c.reduce((t,a)=>t+done(a),0),pc=Math.round(dn/ms*100);return `<button class="gt" type="button" data-g="${g.n}" aria-pressed="false" aria-label="Filter to goal ${g.n}, ${esc(g.name)}" style="--gc:${g.color};animation-delay:${k*60}ms"><span class="gti">${ico("g"+g.n,20)}</span><span class="gtt"><b>${esc(g.short)}</b><small>${c.length} action${c.length===1?"":"s"} · ${pc}%</small></span><i class="gtb" style="width:${pc}%"></i></button>`}).join("");
+function toggleStatus(t){activeStatus.has(t)?activeStatus.delete(t):activeStatus.add(t);$$(".chip").forEach(c=>c.setAttribute("aria-pressed",activeStatus.has(c.dataset.s)));renderDash()}
+$("#v-dashboard").addEventListener("click",e=>{const f=e.target.closest("[data-fs]");if(f){toggleStatus(f.dataset.fs);return}const g=e.target.closest(".gt");if(g){const q=$("#fGoal");q.value=q.value===g.dataset.g?"":g.dataset.g;renderDash();return}const b=e.target.closest("#board [data-id],#road [data-id],#pulse [data-id]");if(b)openAct(b.dataset.id)});
+
+// ===== motion layer =====
+const STILL=new URLSearchParams(location.search).has("still")||matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.documentElement.classList.add(STILL?"still":"js-motion");
+function countEl(el,ms){const fin=el.dataset.fin||(el.dataset.fin=el.textContent),m=fin.match(/^(\D*)(\d[\d,]*\.?\d*)(.*)$/);if(STILL||!m){el.textContent=fin;return}
+ const n=parseFloat(m[2].replace(/,/g,"")),dec=(m[2].split(".")[1]||"").length,t0=performance.now();
+ (function f(t){const k=Math.min(Math.max((t-t0)/(ms||1000),0),1),e=1-Math.pow(1-k,3);el.textContent=m[1]+(n*e).toFixed(dec)+m[3];if(k<1)requestAnimationFrame(f);else el.textContent=fin})(t0)}
+function countAll(root,ms){root.querySelectorAll(".cnt").forEach(e=>countEl(e,ms))}
+$$("#indicators .v").forEach(e=>e.classList.add("cnt"));
+$$("#goalCards .goalcard").forEach((c,i)=>c.dataset.n=i+1);
+// hero transit lines
+(function(){const C=["#b9a6ff","#3fb0ff","#2fd3c8","#ff8a4d","#ff6fc1","#b6e25a"],
+ P=["M-20,120H520l120,120H980l90,-90H1460","M-20,520H420l140,-140H900l120,120H1460","M760,-20V150l110,110V420l-90,90V660","M1100,-20V90l-120,120H640l-100,100V660","M-20,330H300l90,90H760l150,-150H1460","M1300,-20V200l-80,80V470l100,100V660"],
+ S=[[520,120],[640,240],[980,240],[1070,150],[420,520],[560,380],[900,380],[1020,500],[760,150],[870,260],[870,420],[300,330],[390,420],[910,270],[1300,200],[1220,280],[1220,470],[1100,90]];
+ $("#heroLines").innerHTML=P.map((d,i)=>`<path class="ln" d="${d}" stroke="${C[i]}"/><path class="fl" d="${d}" style="animation-duration:${5+i*.8}s"/>`).join("")+S.map((p,i)=>`<circle class="st" cx="${p[0]}" cy="${p[1]}" r="8"/>${i%3===0?`<circle class="pu" cx="${p[0]}" cy="${p[1]}" r="8" style="animation-delay:${i*.25}s"/>`:""}`).join("")})();
+// ticker
+$("#tk").innerHTML=[0,1].map(k=>NEWS.map(n=>`<a href="#dashboard/${n[1]}"${k?' aria-hidden="true" tabindex="-1"':""}><span>${n[0]} · ${n[1]}</span>${esc(n[2])}</a>`).join("")).join("");
+// rotating headline word
+if(!STILL){const w=["stay.","grow.","thrive."],r=$("#rot");let i=0;r.textContent=w[0];setInterval(()=>{i=(i+1)%3;r.textContent=w[i];r.classList.remove("sw");void r.offsetWidth;r.classList.add("sw")},2200)}
+// the plan as a transit map
+(function(){const X0=250,STEP=118,RH=84,W=1100,H=GOALS.length*RH+12,FILL={planned:"#aab3bd",underway:"#1f6fc5",milestone:"#3d7a12",attention:"#b25e00"};let h="";
+ GOALS.forEach((g,r)=>{const L=A.filter(a=>a.g===g.n),y=42+r*RH,xs=X0-40,xe=X0+(L.length-1)*STEP,ms=L.reduce((s,a)=>s+a.ms.length,0),dn=L.reduce((s,a)=>s+done(a),0),xp=xs+(xe-xs)*(dn/ms),act=L.filter(a=>a.status!=="planned").length,dur=(3.4+r*.3)+"s",bg=(1.5+r*.14)+"s";
+  h+=`<circle cx="24" cy="${y}" r="17" fill="${g.color}"/><text class="lm-num" x="24" y="${y+5}">${g.n}</text><text class="lm-name" x="50" y="${y+5}">${esc(g.short)}</text>
+  <path class="lm-line" pathLength="1" d="M${xs},${y}H${xe}" stroke="${g.color}" style="transition-delay:${r*140}ms"/>
+  ${STILL||!dn?"":`<circle class="train" r="5" cy="${y}" cx="${xs}" stroke="${g.color}" opacity="0"><animate attributeName="cx" values="${xs};${xp};${xp}" keyTimes="0;.7;1" dur="${dur}" begin="${bg}" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.1;.75;1" dur="${dur}" begin="${bg}" repeatCount="indefinite"/></circle>`}
+  ${L.map((a,i)=>{const x=X0+i*STEP,st=a.status;return `<g class="lm-st" tabindex="0" role="link" data-id="${a.id}" aria-label="Action ${a.id}: ${esc(a.title)}. ${ST[st]}." data-tip="${a.id} · ${esc(a.title)} · ${ST[st]}" style="transition-delay:${r*140+250+i*90}ms"><circle class="ring" cx="${x}" cy="${y}" r="12" fill="#fff" stroke="${g.color}" stroke-width="3.5"/>${st==="attention"?`<rect x="${x-4.5}" y="${y-5}" width="3.4" height="10" fill="${FILL[st]}"/><rect x="${x+1.1}" y="${y-5}" width="3.4" height="10" fill="${FILL[st]}"/>`:`<circle cx="${x}" cy="${y}" r="${st==="milestone"?8:st==="planned"?3.5:6}" fill="${FILL[st]}"/>`}${st==="milestone"?`<path d="M${x-4},${y}l3,3l5,-6" fill="none" stroke="#fff" stroke-width="2"/>`:""}<text class="lm-id" x="${x}" y="${y+30}">${a.id}</text></g>`}).join("")}
+  <text class="lm-end" x="${xe+26}" y="${y+4}">${act} of ${L.length} active</text>`});
+ $("#lines").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="CEDS actions shown as stops on six goal lines">${h}</svg>`;
+ $("#lmLegend").innerHTML=`<span class="status"><svg width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="${FILL.milestone}"/><path d="M5,9l3,3l5,-6" fill="none" stroke="#fff" stroke-width="2"/></svg>Complete</span><span class="status"><svg width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="${FILL.underway}"/></svg>Underway</span><span class="status"><svg width="18" height="18" aria-hidden="true"><rect x="4.5" y="4" width="3.4" height="10" fill="${FILL.attention}"/><rect x="10.1" y="4" width="3.4" height="10" fill="${FILL.attention}"/></svg>Paused</span><span class="status"><svg width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="3.5" fill="${FILL.planned}"/></svg>Not started</span><span class="note">Sample statuses</span>`;
+ const open=e=>{const t=e.target.closest(".lm-st");if(t)go("#dashboard/"+t.dataset.id)};$("#lines").onclick=open;$("#lines").onkeydown=e=>{if(e.key==="Enter")open(e)}})();
+// reveal on scroll, counters, focus tooltips, scroll progress
+const io=STILL?null:new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");if(e.target.dataset.count!==undefined)countAll(e.target);io.unobserve(e.target)}}),{threshold:.12});
+const watch=el=>io?io.observe(el):el.classList.add("in");
+$$(".band h2,.band .sub,.band .card,.vision,.timeline li,details.goal,.linemap").forEach(el=>{el.classList.add("rv");el.style.transitionDelay=Math.min([...el.parentNode.children].indexOf(el),6)*70+"ms";watch(el)});
+["#homeKpis","#indicators"].forEach(q=>{const el=$(q);el.dataset.count="";watch(el)});
+document.addEventListener("focusin",e=>{const t=e.target.closest&&e.target.closest("[data-tip]");if(t){const b=t.getBoundingClientRect();tip.textContent=t.dataset.tip;tip.style.opacity=1;tip.style.left=Math.max(8,Math.min(b.left,innerWidth-tip.offsetWidth-8))+"px";tip.style.top=b.bottom+8+"px"}});
+document.addEventListener("focusout",()=>tip.style.opacity=0);
+document.body.insertAdjacentHTML("afterbegin",'<div id="sp" aria-hidden="true"></div>');
+addEventListener("scroll",()=>{const d=document.documentElement;$("#sp").style.width=d.scrollTop/((d.scrollHeight-d.clientHeight)||1)*100+"%"},{passive:true});
+
+CUR=location.hash||"#home";renderDash();route();
+const QS=new URLSearchParams(location.search);
+if(QS.has("clean")){$("#annotToggle").checked=false;document.body.classList.add("noannot")}
+if(QS.has("view"))setView(QS.get("view"));
+if(QS.has("act")){openAct(QS.get("act"));document.activeElement.blur()}
+if(QS.has("ask")){$("#sugg").remove();$(".chat .cb .msg.a").remove();$("#chat").classList.add("on");$("#fab").setAttribute("aria-expanded","true");ask(QS.get("ask"))}
+</script>
+</body>
+</html>
